@@ -22,7 +22,7 @@ app.use(cookieParser())
 app.use(express.json());
 
 app.use(cors({
-    origin: '',
+    origin: 'https://todo-f-phi.vercel.app',
     credentials: true,
   }));
 
