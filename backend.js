@@ -22,7 +22,7 @@ app.use(cookieParser())
 app.use(express.json());
 
 app.use(cors({
-    origin: 'https://todo-f-git-main-yogeshtiwari12s-projects.vercel.app',
+    origin: 'https://todo-f-yogeshtiwari12s-projects.vercel.app',
     credentials: true,
   }));
 
