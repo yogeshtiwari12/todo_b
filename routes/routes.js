@@ -7,7 +7,7 @@ import { usertodos } from '../methods/todo.js';
 const routes = express.Router();
 routes.put('/signup',signup)
 routes.post('/login',login)
-routes.post('/logout',logout)
+routes.post('/logout',verifytoken,logout)
 routes.get('/getauthuser',verifytoken,valid_user)
 routes.get('/allusertodo/:id',verifytoken,isadmin("admin"),allusertodo)
 routes.get('/allusers',verifytoken,isadmin("admin"),allusers)
