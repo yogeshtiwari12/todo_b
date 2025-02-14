@@ -1,6 +1,6 @@
 import express from 'express';
 import {  addtodo, alltodos, deletetodo, updatetodo, usertodos } from '../methods/todo.js';
-import { isadmin, verifytoken } from '../auth/auth.js';
+import { verifytoken } from '../auth/auth.js';
 const routes2 = express.Router();
 
 routes2.post('/addtodo',verifytoken,addtodo);
