@@ -24,11 +24,11 @@ export const verifytoken  = async(req,res,next)=>{
 
 }
 
-// export const isadmin = (...roles)=>{
-//     return (req,res,next)=>{
-//         if(!roles.includes(req.user.role)){
-//             return res.status(403).json({error: "Not authorized to access this route"})
-//         }
-//         next();
-//     }
-// }
+export const isadmin = (...roles)=>{
+    return (req,res,next)=>{
+        if(!roles.includes(req.user.role)){
+            return res.status(403).json({error: "Not authorized to access this route"})
+        }
+        next();
+    }
+}
