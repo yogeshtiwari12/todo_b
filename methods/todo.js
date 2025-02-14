@@ -7,7 +7,7 @@ export const addtodo = async (req, res) => {
         if (!title || !description || !dueDays || !time) {
             return res.status(400).json({ error: 'Please provide all required fields' });
         }
-        const newTodo = new todomodel({ title, description, dueDays, time, uid: req.user.id });
+        const newTodo = new todomodel({ title, description, dueDays, time, uid: req?.user?.id });
         await newTodo.save();
         res.status(201).json(newTodo);  
     } catch (error) {
