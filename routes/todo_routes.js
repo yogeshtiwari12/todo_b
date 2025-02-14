@@ -1,14 +1,14 @@
 import express from 'express';
 import {  addtodo, alltodos, deletetodo, updatetodo, usertodos } from '../methods/todo.js';
-import { verifytoken } from '../auth/auth.js';
-const routes2 = express.Router();
-
-routes2.post('/addtodo',verifytoken,addtodo);
-routes2.delete('/deletetodo/:id',deletetodo);
-routes2.put('/updatetodo/:id',updatetodo)
-routes2.post('/alltodo',alltodos)
-routes2.get('/userstodo/:id',verifytoken,usertodos)
+import { isadmin, verifytoken } from '../auth/auth.js';
+import { usertodos } from '../methods/todo.js';
 
 
+const routes = express.Router();
+routes.put('/signup',signup)
+routes.post('/login',login)
+routes.post('/logout',logout)
+routes.get('/getauthuser',verifytoken,valid_user)
+routes.get('/allusertodo/:id',verifytoken,allusertodo)
+routes.get('/allusers',verifytoken,isadmin("admin"),allusers)
 
-export default routes2
