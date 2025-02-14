@@ -22,7 +22,7 @@ app.use(cookieParser())
 app.use(express.json());
 
 app.use(cors({
-    origin: 'https://todo-app-backend-qibv.onrender.com',
+    origin: '',
     credentials: true,
   }));
 
