@@ -9,7 +9,7 @@ export const addtodo = async (req, res) => {
         }
         const newTodo = new todomodel({ title, description, dueDays, time, uid: req?.user?.id });
         await newTodo.save();
-        res.status(201).json(newTodo);  
+        res.status(201).json({message:"Todo Added succesfully"});  
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
