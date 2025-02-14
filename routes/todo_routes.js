@@ -3,7 +3,7 @@ import {  addtodo, alltodos, deletetodo, updatetodo, usertodos } from '../method
 import { isadmin, verifytoken } from '../auth/auth.js';
 const routes2 = express.Router();
 
-routes2.put('/addtodo',verifytoken,addtodo);
+routes2.post('/addtodo',verifytoken,addtodo);
 routes2.delete('/deletetodo/:id',deletetodo);
 routes2.put('/updatetodo/:id',updatetodo)
 routes2.post('/alltodo',alltodos)
