@@ -38,6 +38,7 @@ export const signup = async (req, res) => {
 
 export const login = async (req, res) => {
     const { email, password } = req.body;
+    console.log(password)
     try {
         if (!email || !password) {
             return res.status(400).json({ error: "Please provide all required fields" });
@@ -141,4 +142,19 @@ export const allusers = async (req, res) => {
         console.error('Error:', error.message);
 
     }
+}
+export const deleteuser  = async (req,res) => {
+    try{
+        const uid = req.params.id;
+        const user = await User.findByIdAndDelete(uid);
+        if(!user){
+            return res.status(404).json({error: "User not found"});
+        }
+        res.json({message: "User deleted successfully"});
+
+}
+catch(error){
+    res.status(500).json({error: "Server error", details: error.message});
+    console.error('Error:', error.message);
+}
 }

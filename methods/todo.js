@@ -3,11 +3,12 @@ import todomodel from "../model/todo.js";
 
 export const addtodo = async (req, res) => {
     const { title, description, dueDays, time } = req.body; 
+    // console.log(req.body)
     try {
         if (!title || !description || !dueDays || !time) {
             return res.status(400).json({ error: 'Please provide all required fields' });
         }
-        const newTodo = new todomodel({ title, description, dueDays, time, uid: req.user.id });
+        const newTodo = new todomodel({ title, description, dueDays, time, uid: req?.user?.id });
         await newTodo.save();
         res.status(201).json(newTodo);  
     } catch (error) {
