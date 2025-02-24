@@ -3,6 +3,7 @@ import User from "../model/model.js";
 import todomodel from "../model/todo.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import redis from "../redis/redis.js";
 const jwtkey = "abcdefghijkdadaafbfasfsfjaf";
 
 export const signup = async (req, res) => {
@@ -83,7 +84,7 @@ export const logout = (req, res) => {
         if (!token) {
             return res.json({ message: 'Token not found' });
         }
-        res.clearCookie('token',{
+        res.clearCookie('token', {
             httpOnly: true,
             secure: true,
             sameSite: 'None',
@@ -104,14 +105,25 @@ export const valid_user = async (req, res) => {
         if (!user) {
             return res.status(401).json({ error: "User not found" });
         }
-        res.json({
-            message: "User found", user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                role: user.role
-            }
-        })
+
+
+        const cachedUser = await redis.get(`user:${user._id}`);
+        if (cachedUser) {
+            return res.json({ message: "User found", user: JSON.parse(cachedUser) });
+        }
+
+        const userData = {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            message: "User found"   
+        }
+
+        await redis.setex(`user:${user._id}`, 3600, JSON.stringify(userData));
+        res.json({user:userData})
+
+
     } catch (error) {
         res.status(500).json({ error: "Server error", error: error.message });
 
@@ -124,7 +136,14 @@ export const allusertodo = async (req, res) => {
     try {
         const uid = req.params.id;
 
+        const cachedTodos = await redis.get(`todos:${uid}`);
+        if (cachedTodos) {
+            return res.json({ todos: JSON.parse(cachedTodos) });
+        }
+
         const todos = await todomodel.find({ uid: uid });
+
+        await redis.setex(`todos:${uid}`, 3600, JSON.stringify(todos));
 
         res.json({ message: "Todos found", todos });
 
@@ -135,26 +154,42 @@ export const allusertodo = async (req, res) => {
 };
 export const allusers = async (req, res) => {
     try {
+
+        const cachedUsers = await redis.get("all_users");
+        if (cachedUsers) {
+            return res.json({message: "Users found", users: JSON.parse(cachedUsers) });
+        }
+
         const allusers = await User.find();
+        await redis.setex("all_users", 3600, JSON.stringify(allusers));
+
         res.json({ message: "Users found", users: allusers });
+
     } catch (error) {
         res.status(500).json({ error: "Server error", details: error.message });
         console.error('Error:', error.message);
 
     }
 }
-export const deleteuser  = async (req,res) => {
-    try{
+export const deleteuser = async (req, res) => {
+    try {
         const uid = req.params.id;
         const user = await User.findByIdAndDelete(uid);
-        if(!user){
-            return res.status(404).json({error: "User not found"});
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
         }
-        res.json({message: "User deleted successfully"});
+        await redis.del(`user:${uid}`);
+        await redis.del("all_users");
 
+        res.json({ message: "User deleted successfully" });
+
+    }
+    catch (error) {
+        res.status(500).json({ error: "Server error", details: error.message });
+        console.error('Error:', error.message);
+    }
 }
-catch(error){
-    res.status(500).json({error: "Server error", details: error.message});
-    console.error('Error:', error.message);
-}
-}
+
+
+
+

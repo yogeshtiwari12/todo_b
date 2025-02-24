@@ -4,13 +4,11 @@ import cors from "cors";
 import routes from "./routes/routes.js";
 import todos_routes from "./routes/todo_routes.js";
 import cookieParser from "cookie-parser";
-
-
-
+import redis from "./redis/redis.js";
 
 
 const app = express();
-mongoose.connect('mongodb://localhost:27017/todo',{
+mongoose.connect('mongodb+srv://yt781703:snsn97GLA@cluster0.h60dd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',{
     
 }).then(()=>{
     console.log('Connected to MongoDB');
@@ -23,9 +21,12 @@ app.use(express.json());
 
 app.use(cors({
 
-    origin: 'http://localhost:5173',
+    origin: 'https://todo-2f-yogeshtiwari12s-projects.vercel.app',
     credentials: true,
   }));
+
+  const data = await redis.get("alltodos");
+  console.log("redis data",data)
 
 
   app.use('/userroute21',routes)

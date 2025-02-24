@@ -1,0 +1,12 @@
+services:
+  redis:
+    image: redis:latest
+    container_name: my_redis2
+    restart: always
+    ports:
+      - "6380:6379"  # External port changed to 6380
+    volumes:
+      - redis_data:/data
+
+volumes:
+  redis_data:
