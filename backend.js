@@ -4,7 +4,7 @@ import cors from "cors";
 import routes from "./routes/routes.js";
 import todos_routes from "./routes/todo_routes.js";
 import cookieParser from "cookie-parser";
-import redis from "./redis/redis.js";
+
 
 
 const app = express();
@@ -24,9 +24,6 @@ app.use(cors({
     origin: 'https://todo-2f-yogeshtiwari12s-projects.vercel.app',
     credentials: true,
   }));
-
-  const data = await redis.get("alltodos");
-  console.log("redis data",data)
 
 
   app.use('/userroute21',routes)
