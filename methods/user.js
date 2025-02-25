@@ -123,7 +123,7 @@ export const login = async (req, res) => {
         if (!isMatch) {
             return res.status(401).json({ error: "Incorrect password" });
         }
-        if (user.role !== "admin" || user.role == "user") {
+        if (user.role !== "admin" && user.role !== "user") {
             return res.status(403).json({ error: "You are not authorized to access this route" });
         }
 
