@@ -58,41 +58,41 @@ export const deletetodo = async (req, res) => {
 }
 export const alltodos = async (req, res) => {
     try {
-
-        const cachedTodos = await redis.get("allTodos");
+        const cachedTodos = await redis.get("todos");
 
         if (cachedTodos) {
-            return res.status(200).json({ message: "todos", todos: JSON.parse(cachedTodos) });
+            return res.status(200).json({ message: "todos", todos: cachedTodos });
         }
+
         const todos = await todomodel.find({});
-
-        await redis.set("allTodos", JSON.stringify(todos), "EX", 600);
-
-        if (!todos) {
+        if (!todos || todos.length === 0) {
             return res.status(404).json({ message: 'Todos not found' });
         }
-        res.status(201).json({ message: "todos", todos })
+
+        console.log("✅ Storing in Redis:", JSON.stringify(todos));
+        await redis.setex("todos", JSON.stringify(todos), { EX: 600 }); 
+
+        res.status(200).json({ message: "todos", todos });
 
     } catch (error) {
-        res.status(500).json({ error: error.message });
-        console.error(error.message)
-
+        console.error("Error fetching todos:", error.message);
+        res.status(500).json({ error: "Server error", details: error.message });
     }
+};
 
-}
 
 export const usertodos = async (req, res) => {
     try {
 
         
         const uid = req.params.id;
-        const cachedTodos = await redis.get(`userTodos:${uid}`);
+        const cachedTodos = await redis.get(`userTodos${uid}:`);
         if (cachedTodos) {
-            return res.json({ message: "Todos found", todos: JSON.parse(cachedTodos) });
+            return res.json({ message: "Todos found", todos: cachedTodos });
         }
 
         const todos = await todomodel.find({ uid }) 
-        await redis.set(`userTodos:${uid}`, JSON.stringify(todos), "EX", 600);
+        await redis.set(`userTodos${uid}:`, JSON.stringify(todos), {"EX": 600});
 
         res.json({ message: "Todos found", todos });
 
