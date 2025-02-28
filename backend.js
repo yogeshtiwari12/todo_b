@@ -21,7 +21,7 @@ app.use(express.json());
 
 app.use(cors({
 
-    origin: 'https://todo-3f-yogeshtiwari12s-projects.vercel.app',
+    origin: 'https://todoapyt.netlify.app',
     credentials: true,
   }));
 
