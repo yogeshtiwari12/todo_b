@@ -1,8 +1,8 @@
 import { Redis } from "@upstash/redis";
 
 const redis = new Redis({
-  url: "https://fancy-catfish-21450.upstash.io", // ✅ Make sure it's the full URL with "https://"
-  token: "AVPKAAIjcDE3YWY1MTcxNDkyZDk0MWVlOGNhOGE3NGM1NWMwZWUzZnAxMA", // ✅ Replace this with your actual token
+  url: "https://more-eft-34254.upstash.io", // ✅ Make sure it's the full URL with "https://"
+  token: "AYXOAAIncDExY2MzOWNkNGFmMTc0M2RkODkzNzc5ZTY0MjQ2NWY5YnAxMzQyNTQ", // ✅ Replace this with your actual token
 });
 
 redis.ping()
