@@ -8,7 +8,7 @@ import cookieParser from "cookie-parser";
 
 
 const app = express();
-mongoose.connect('mongodb://localhost:27017/todo',{
+mongoose.connect('mongodb+srv://yt781703:snsn97GLA@cluster0.h60dd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',{
     
 }).then(()=>{
     console.log('Connected to MongoDB');
@@ -21,12 +21,11 @@ app.use(express.json());
 
 app.use(cors({
 
-    origin: 'http://localhost:5173',
+    origin: ['http://localhost:5173'],
     credentials: true,
   }));
 
-
-  app.use('/userroute21',routes)
+app.use('/userroute21',routes)
 app.use('/todosroute',todos_routes)
 
   app.listen(4000, () => {

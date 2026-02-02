@@ -20,14 +20,17 @@ export const signup =  async (req, res) => {
         }
         console.log(email);
 
-        const sendotp = await sendOTP(email);
-        if (!sendotp.success) {
-            console.log(sendotp)
-            return res.status(500).json({ message: sendotp.message });
-        }
 
-        res.status(200).json({ message: 'OTP sent successfully' });
+        const hashedPassword = await bcrypt.hash(password, 10);         
+        const newUser = new User({  
+            name,
+            email,
+            password: hashedPassword,   
+            role    
+        }); 
 
+        await newUser.save();   
+        return res.status(200).json({ message: "User created successfully" });                              
 
 
     } catch (error) {
@@ -36,76 +39,7 @@ export const signup =  async (req, res) => {
 };
 
 
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: 'yt781703@gmail.com',  // <-- Your Gmail
-        pass: 'rflp zlok pcyd iewa'   // <-- Your Gmail App Password
-    }
-});
 
-const otpStore = {};
-const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
-
-export const sendOTP = async (email) => {
-    try {
-        const otp = generateOTP();
-        otpStore[email] = { otp, expiresAt: Date.now() + 5 * 60 * 1000 }; // 5-minute expiration
-
-        const mailOptions = {
-            from: 'yt781703@gmail.com',
-            to: email,
-            subject: 'Your OTP Code',
-            text: `Your OTP is ${otp}. It will expire in 5 minutes.`
-        };
-
-        await transporter.sendMail(mailOptions);
-        return { success: true, message: 'OTP sent successfully', otp };
-    } catch (error) {
-        console.error("Error sending OTP:", error); 
-        return { success: false, message: 'Error sending OTP', error: error.message };
-    }
-};
-
-
-export const verify  = async (req, res) => {
-    const { name, email, otp, password,role} = req.body;
-    try {
-        if (!otpStore[email]) {
-            return res.status(400).json({ message: 'No OTP sent to this email' });
-        }
-
-        const { otp: storedOtp, expiresAt } = otpStore[email];
-
-        if (Date.now() > expiresAt) {
-            delete otpStore[email]; 
-            return res.status(400).json({ message: 'OTP has expired' });
-        }
-        console.log(typeof((storedOtp)), typeof(otp));
-
-
-        if ((Number)(storedOtp) !== otp) {
-            console.log(typeof((storedOtp)), typeof(otp));
-            return res.status(400).json({ message: 'Invalid OTP' });
-        }
-
-        const hashpass = await bcrypt.hash(password, 10);  
-
-        const newUser = new User({
-            name,
-            email,
-            password: hashpass,
-            role
-        });
-        await newUser.save();
-
-        res.status(200).json({ success: true, message: 'User signed up successfully', name: newUser.name });
-
-    } catch (error) {
-        console.error("Error verifying OTP:", error); // Log error for debugging
-        res.status(500).json({ success: false, message: 'Error verifying OTP', error: error.message });
-    }
-};
 
 
 export const login = async (req, res) => {
@@ -123,7 +57,7 @@ export const login = async (req, res) => {
         if (!isMatch) {
             return res.status(401).json({ error: "Incorrect password" });
         }
-        if (user.role !== "admin" || user.role == "user") {
+        if (user.role !== "admin" && user.role !== "user") {
             return res.status(403).json({ error: "You are not authorized to access this route" });
         }
 
@@ -166,7 +100,7 @@ export const logout = async(req, res) => {
       redis.del("allTodos");    
       redis.del("all_users");
       redis.del("userTodos:");
-        res.json({ message: 'Logged out successfully' });
+    res.json({ message: 'Logged out successfully' });
 
 
     } catch (error) {

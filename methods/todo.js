@@ -69,7 +69,7 @@ export const alltodos = async (req, res) => {
             return res.status(404).json({ message: 'Todos not found' });
         }
 
-        console.log("✅ Storing in Redis:", JSON.stringify(todos));
+        console.log(" Storing in Redis:", JSON.stringify(todos));
         await redis.setex("todos", JSON.stringify(todos), { EX: 600 }); 
 
         res.status(200).json({ message: "todos", todos });
